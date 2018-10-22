@@ -123,18 +123,19 @@ for (i = 0; i < NUM_ROWS_B; i++) {
 
 void printArray()
 {
+printf("Matriz a\n\n\n");
 for (i = 0; i < NUM_ROWS_A; i++) {
   printf("\n");
   for (j = 0; j < NUM_COLUMNS_A; j++)
     printf("%8.2f ", mat_a[i][j]);
 }
-printf("\n\n\n");
+printf("Matriz b\n\n\n");
 for (i = 0; i < NUM_ROWS_B; i++) {
   printf("\n");
   for (j = 0; j < NUM_COLUMNS_B; j++)
     printf("%8.2f ", mat_b[i][j]);
 }
-printf("\n\n\n");
+printf("Matriz resultado\n\n\n");
 for (i = 0; i < NUM_ROWS_A; i++) {
   printf("\n");
   for (j = 0; j < NUM_COLUMNS_B; j++)
