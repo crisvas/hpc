@@ -46,6 +46,7 @@ MPI_Comm_size(MPI_COMM_WORLD, &size); //get number of processes
 if (rank == 0) {
   makeAB();
   start_time = MPI_Wtime();
+  printf("divide el trabajo\n");
   for (i = 1; i < size; i++) {//for each slave other than the master
     portion = (NUM_ROWS_A / (size - 1)); // calculate portion without master
     low_bound = (i - 1) * portion;
@@ -54,6 +55,8 @@ if (rank == 0) {
     } else {
       upper_bound = low_bound + portion; //rows of [A] are equally divisable among slaves
     }
+    
+    printf("envia el trabajo\n");
     //send the low bound first without blocking, to the intended slave
     MPI_Isend(&low_bound, 1, MPI_INT, i, MASTER_TO_SLAVE_TAG, MPI_COMM_WORLD, &request);
     //next send the upper bound without blocking, to the intended slave
@@ -64,9 +67,11 @@ if (rank == 0) {
 }
 
 //broadcast [B] to all the slaves
+ printf("envia a b a todos \n"); 
 MPI_Bcast(&mat_b, NUM_ROWS_B*NUM_COLUMNS_B, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 /* work done by slaves*/
 if (rank > 0) {
+ printf("recontruye la matriz b\n");
   //receive low bound from the master
   MPI_Recv(&low_bound, 1, MPI_INT, 0, MASTER_TO_SLAVE_TAG, MPI_COMM_WORLD, &status);
   //next receive upper bound from the master
@@ -76,6 +81,7 @@ if (rank > 0) {
   for (i = low_bound; i < upper_bound; i++) {//iterate through a given set of rows of [A]
     for (j = 0; j < NUM_COLUMNS_B; j++) {//iterate through columns of [B]
       for (k = 0; k < NUM_ROWS_B; k++) {//iterate through rows of [B]
+        printf("guardand en  lamatriz\n");
         mat_result[i][j] += (mat_a[i][k] * mat_b[k][j]);
       }
     }
@@ -91,6 +97,7 @@ if (rank > 0) {
 
 /* master gathers processed work*/
 if (rank == 0) {
+  printf("soy el maestro y recontryo  la matriz \n");
   for (i = 1; i < size; i++) {// untill all slaves have handed back the processed data
     //receive low bound from a slave
     MPI_Recv(&low_bound, 1, MPI_INT, i, SLAVE_TO_MASTER_TAG, MPI_COMM_WORLD, &status);
@@ -101,10 +108,11 @@ if (rank == 0) {
   }
   end_time = MPI_Wtime();
   printf("\nRunning Time = %f\n\n", end_time - start_time);
-  printArray();
+  
 }
 MPI_Finalize(); //finalize MPI operations
-return 0;
+printArray();
+  return 0;
 }
 
 void makeAB()
