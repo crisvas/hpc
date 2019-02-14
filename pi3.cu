@@ -1,7 +1,12 @@
 #include <iostream>
+#include<stdio.h>
+#include <stdlib.h>
 #include <vector>
+#include <time.h>
 
 using namespace std;
+
+
 
 // Create a kernel to estimate pi
 __global__ 
@@ -43,11 +48,14 @@ void count_samples_in_circles(float* d_randNumsX, float* d_randNumsY, int* d_cou
 int nsamples = 1e8;
 
 int main(void) {   
+  
+  clock_t time_start, time_end;
   // allocate space to hold random values    
   vector<float> h_randNumsX(nsamples);    
   vector<float> h_randNumsY(nsamples);
   srand(time(NULL)); // seed with system clock
     
+  time_start = clock();
   //Initialize vector with random values    
   for (int i = 0; i < h_randNumsX.size(); ++i) 
   {        
@@ -87,14 +95,17 @@ int main(void) {
     //cout << "Value in block " + i << " is " << h_countInBlocks[i] << endl;
     nsamples_in_circle = nsamples_in_circle + h_countInBlocks[i];
   }
-
+  
+  
+  
   cudaFree(d_randNumsX);
   cudaFree(d_randNumsY);
   cudaFree(d_countInBlocks);
-
+  time_end = clock();
   // fraction that fell within (quarter) of unit circle
   float estimatedValue = 4.0 * float(nsamples_in_circle) / nsamples;
-
+  time = ((double)(time_end-time_start))/CLOCKS_PER_SEC;
+  printf ("El tiempo transcurrido en la GPU fue %lf segundos.\n", time);
   cout << "Estimated Value: " << estimatedValue << endl;
 }
 
