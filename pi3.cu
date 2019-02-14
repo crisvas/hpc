@@ -48,7 +48,7 @@ void count_samples_in_circles(float* d_randNumsX, float* d_randNumsY, int* d_cou
 int nsamples = 1e8;
 
 int main(void) {   
-  double time;
+  double timegpu;
   clock_t time_start, time_end;
   // allocate space to hold random values    
   vector<float> h_randNumsX(nsamples);    
@@ -105,8 +105,8 @@ int main(void) {
   // fraction that fell within (quarter) of unit circle
   float estimatedValue = 4.0 * float(nsamples_in_circle) / nsamples;
   
-  time = ((double)(time_end-time_start))/CLOCKS_PER_SEC;
-  printf ("El tiempo transcurrido en la GPU fue %lf segundos.\n", time);
+  timegpu = ((double)(time_end-time_start))/CLOCKS_PER_SEC;
+  printf ("El tiempo transcurrido en la GPU fue %lf segundos.\n", timegpu);
   cout << "Estimated Value: " << estimatedValue << endl;
 }
 
